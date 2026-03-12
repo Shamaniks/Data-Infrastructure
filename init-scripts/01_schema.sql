@@ -1,3 +1,5 @@
+SET NAMES 'utf8mb4';
+
 CREATE TABLE IF NOT EXISTS outlet (
     outlet_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     outlet_name VARCHAR(10) NOT NULL,

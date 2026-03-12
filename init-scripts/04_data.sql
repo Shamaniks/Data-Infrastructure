@@ -1,3 +1,5 @@
+SET NAMES 'utf8mb4';
+
 INSERT INTO outlet (outlet_name, outlet_address)
 VALUES
 ('FG-01', 'г. Москва, ул. Беговая, д. 17, стр. 8'),

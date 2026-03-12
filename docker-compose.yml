@@ -1,6 +1,7 @@
 services:
   db:
     image: mysql:8.0
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     container_name: mysql_core
     restart: always
     environment:
@@ -12,6 +13,21 @@ services:
       - ./init-scripts:/docker-entrypoint-initdb.d:z
       - mysql_data:/var/lib/mysql:z
 
+  api:
+    build: ./backend
+    container_name: flask_api
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app:z
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: root_password
+      DB_NAME: data_infrastructure
+    depends_on:
+      - db
+
 volumes:
   mysql_data:
-

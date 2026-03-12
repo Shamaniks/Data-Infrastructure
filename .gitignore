@@ -1,9 +1,25 @@
 # Docker database storage
 mysql_data/
 
+# Python environment & cache
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
 # OS generated files
 .DS_Store
 Thumbs.db
 
 # Logs
 *.log
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+Session.vim
+.netrwhist
+undo/
