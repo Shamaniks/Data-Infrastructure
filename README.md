@@ -23,8 +23,8 @@ The initialization logic is decoupled into sequential SQL scripts located in `/i
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repo-url>
-    cd <project-folder>
+    git clone https://github.com/Shamaniks/Data-Infrastructure
+    cd Data-Infrastructure
     ```
 
 2.  **Launch the infrastructure:**
