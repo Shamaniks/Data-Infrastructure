@@ -12,6 +12,11 @@ services:
     volumes:
       - ./init-scripts:/docker-entrypoint-initdb.d:z
       - mysql_data:/var/lib/mysql:z
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   api:
     build: ./backend
@@ -27,7 +32,10 @@ services:
       DB_PASSWORD: root_password
       DB_NAME: data_infrastructure
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "pytest test.py -v && python app.py"
 
 volumes:
   mysql_data:
