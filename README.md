@@ -1,23 +1,28 @@
-# Polyglot Persistence Platform — Phase 1: Relational Core (MySQL)
+# Polyglot Persistence Platform
 
-This repository demonstrates a scalable data infrastructure. It starts with a robust **MySQL** architecture, designed for transactional integrity, and is containerized for instant deployment.
+This repository demonstrates a scalable data infrastructure. It features a MySQL core with a Flask RESTful API, fully containerized and protected by a Role-Based Access Control (RBAC) system.
 
 ## Architecture Concept
 This is the first step in building a multi-database environment (**Polyglot Persistence**). The goal is to show how different storage engines (MySQL, Redis, MongoDB, ClickHouse) can coexist to handle specific data workloads.
 
 ### Current Stack:
-*   **Database:** MySQL 8.0
-*   **Orchestration:** Docker Compose
-*   **Design Patterns:** 3NF (Third Normal Form), RBAC (Role-Based Access Control)
+*   **Database**: MySQL 8.0 (3NF, RBAC)
+*   **API**: Python 3.10 + Flask
+*   **Auth**: JWT (JSON Web Tokens)
+*   **Testing**: Pytest (Integrated into the CI/CD container flow)
+*   **Orchestration**: Docker Compose V2
 
 ## Project Structure
-The initialization logic is decoupled into sequential SQL scripts located in `/init-scripts`. Docker executes them in alphabetical order:
-
-1.  `00_init.sql` — Database creation and environment settings.
-2.  `01_schema.sql` — Data Definition Language (DDL): Tables and relations.
-3.  `02_indexes.sql` — Performance optimization and constraints.
-4.  `03_roles.sql` — Security layer: User roles and privilege grants.
-5.  `04_data.sql` — DML: Initial seed data for demonstration.
+The project is split into the database layer and the application layer:
+.
+├── backend/               # Flask Application
+│   ├── app.py             # Entry point
+│   ├── auth.py            # JWT & RBAC logic
+│   ├── database.py        # MySQL connection manager
+│   ├── routes.py          # API Endpoints
+│   └── test.py            # Integration tests (Pytest)
+├── init-scripts/          # Database initialization (00_init to 04_data)
+└── docker-compose.yml     # Infrastructure manifest
 
 ## Quick Start
 
@@ -29,10 +34,16 @@ The initialization logic is decoupled into sequential SQL scripts located in `/i
 
 2.  **Launch the infrastructure:**
     ```bash
-    docker-compose up -d
+    # This will run migrations, execute Pytest scenarios, and start the API
+    docker compose up --build
+    # For older docker versions
+    docker-comspose up --build
     ```
+3.  **Verify the API**
+    1. Health Check `GET http://localhost:5000/api/health`
+    2. Auth `POST http://localhost:5000/api/login <JSON: login/password>`
 
-3.  **Access the Database:**
+4.  **Access the Database:**
     Connect via any SQL client (DBeaver, DataGrip) on `localhost:3306` using:
     *   **User:** `root`
     *   **Password:** `root_password` (defined in docker-compose.yml)
