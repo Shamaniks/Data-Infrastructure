@@ -2,12 +2,14 @@ import pytest
 import time
 import os
 import redis
+
 from app import app
-from database import db
+import connectors
 
 @pytest.fixture(scope="session", autouse=True)
 def wait_for_services():
     """Waiting for MySQL and Redis awake"""
+    db = connectors.mysql.get_mysql()
     retries = 10
     db_ready = False
     while retries > 0:
@@ -19,13 +21,11 @@ def wait_for_services():
         except Exception:
             retries -= 1
             time.sleep(2)
-
     if not db_ready:
         pytest.exit("MySQL is not responding. Check docker logs.")
 
     try:
-        r = redis.Redis(host=os.getenv('REDIS_HOST', 'redis'), port=6379)
-        r.ping()
+        connectors.get_redis().ping()
     except Exception:
         print("Warning: Redis is not reachable, some tests might fail.")
 
@@ -37,9 +37,4 @@ def client():
 
 @pytest.fixture
 def redis_conn():
-    return redis.Redis(
-        host=os.getenv('REDIS_HOST', 'redis'), 
-        port=6379, 
-        decode_responses=True
-    )
-
+    return connectors.get_redis()

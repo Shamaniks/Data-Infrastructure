@@ -1,3 +1,4 @@
+# Const role mapping
 ERRORS = {
     "NO_TOKEN": ("Authorization token is missing", 401),
     "INVALID_TOKEN": ("Token is invalid or expired", 401),

@@ -14,7 +14,7 @@ class Database:
         self.root_password = os.getenv('DB_PASSWORD', 'root_password')
 
     @contextmanager
-    def get_cursor(self, db_user="client", db_pass="Pa$$w0rd"):
+    def get_cursor(self, db_user: str ="client", db_pass: str ="Pa$$w0rd"):
         """Connects to MySQL as a specific database user role."""
         connection = pymysql.connect(
             host=self.host,
@@ -36,4 +36,3 @@ class Database:
             connection.close()
 
 db = Database()
-
