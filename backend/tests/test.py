@@ -8,6 +8,20 @@ TEST_SCENARIOS = [
     ("wk_IvanovII", "Pa$$w0rd", "worker", "supplier", "mysql.user") 
 ]
 
+@pytest.fixture(scope="session", autouse=True)
+def wait_for_db():
+    """Wait till DB will awake"""
+    retries = 10
+    while retries > 0:
+        try:
+            conn = get_db_connection()
+            conn.close()
+            return
+        except Exception:
+            retries -= 1
+            time.sleep(2)
+    pytest.exit("Could not connect to DB, skipping tests")
+
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
