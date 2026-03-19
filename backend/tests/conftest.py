@@ -3,23 +3,25 @@ import time
 import os
 import redis
 from app import app
-from database import get_db_connection
+from database import db
 
 @pytest.fixture(scope="session", autouse=True)
 def wait_for_services():
     """Waiting for MySQL and Redis awake"""
-    db_ok = False
-    for _ in range(10):
+    retries = 10
+    db_ready = False
+    while retries > 0:
         try:
-            conn = get_db_connection()
-            conn.close()
-            db_ok = True
-            break
+            with db.get_cursor(db.root_user, db.root_password) as cursor:
+                cursor.execute("SELECT 1")
+                db_ready = True
+                break
         except Exception:
+            retries -= 1
             time.sleep(2)
-    
-    if not db_ok:
-        pytest.exit("MySQL is down. Stopping.")
+
+    if not db_ready:
+        pytest.exit("MySQL is not responding. Check docker logs.")
 
     try:
         r = redis.Redis(host=os.getenv('REDIS_HOST', 'redis'), port=6379)
