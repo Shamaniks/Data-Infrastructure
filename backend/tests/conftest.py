@@ -9,7 +9,7 @@ import connectors
 @pytest.fixture(scope="session", autouse=True)
 def wait_for_services():
     """Waiting for MySQL and Redis awake"""
-    db = connectors.mysql.get_mysql()
+    db = connectors.get_mysql()
     retries = 10
     db_ready = False
     while retries > 0:

@@ -2,6 +2,7 @@ import jwt
 import datetime
 from typing import Dict, Any, Optional, Callable, Union
 from flask import request, current_app, Response
+from functools import wraps
 
 import connectors
 from redis_engine.auth import store_session, is_token_valid, invalidate_session
@@ -13,6 +14,38 @@ ROLE_MAPPING: Dict[Optional[str], str] = {
     'Старший кассир': 'worker',
     None: 'client'
 }
+
+def auth_required(f: Callable[..., Any]) -> Callable[..., Any]:
+    @wraps(f)
+    def decorated(*args: Any, **kwargs: Any) -> Any:
+        auth_header: Optional[str] = request.headers.get('Authorization')
+        if not auth_header:
+            return error_res("NO_TOKEN", 401)
+       
+        try:
+            token: str = auth_header.split(" ")[1] if " " in auth_header else auth_header
+            
+            data: Dict[str, Any] = jwt.decode(
+                token,
+                current_app.config['SECRET_KEY'],
+                algorithms=["HS256"]
+            )
+            login: str = data['user']
+            role: str = data['role']
+            
+            if not is_token_valid(login, token):
+                return error_res("TOKEN_REVOKED", 401)
+            
+            setattr(request, 'user_role', role)
+            setattr(request, 'user_login', login)
+            
+        except jwt.ExpiredSignatureError:
+            return error_res("TOKEN_EXPIRED", 401)
+        except Exception:
+            return error_res("INVALID_TOKEN", 401)
+           
+        return f(*args, **kwargs)
+    return decorated
 
 def authenticate_user(login: str, password: str) -> Optional[Dict[str, str]]:
     """Checks DB and returns auth data or None."""

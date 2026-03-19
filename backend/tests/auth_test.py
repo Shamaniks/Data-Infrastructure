@@ -6,7 +6,6 @@ TEST_SCENARIOS = [
     ("wk_IvanovII", "Pa$$w0rd", "worker", "supplier", "mysql.user") 
 ]
 
-@pytest.mark.mysql
 @pytest.mark.parametrize("login, password, expected_role, allowed_table, forbidden_table", TEST_SCENARIOS)
 def test_full_user_flow(client, login, password, expected_role, allowed_table, forbidden_table):
     login_res = client.post('/api/login', json={"login": login, "password": password})
