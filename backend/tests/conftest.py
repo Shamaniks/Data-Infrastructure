@@ -38,3 +38,12 @@ def client():
 @pytest.fixture
 def redis_conn():
     return connectors.get_redis()
+
+@pytest.fixture(scope="function")
+def mongo_collection():
+    """Returns the products collection for test data setup/teardown."""
+    mongo = connectors.get_mongo()
+    collection = mongo.get_collection("products")
+    # Clear any previous test data
+    collection.delete_many({})
+    return collection

@@ -3,7 +3,6 @@ from typing import Dict, Any
 
 import connectors
 
-@pytest.mark.redis
 def test_cart_full_cycle(client: Any):
     """Testing full cycle: login -> add to cart -> check -> delete"""
     
