@@ -10,7 +10,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./init-scripts:/docker-entrypoint-initdb.d:z
+      - ./mysql_init:/docker-entrypoint-initdb.d:z
       - mysql_data:/var/lib/mysql:z
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
@@ -43,6 +43,7 @@ services:
     profiles:
       - test_only
     environment:
+      MONGO_URI: mongodb://root:root_password@mongo:27017/shopdb?authSource=admin
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: root_password
@@ -68,6 +69,21 @@ services:
       - redis_data:/data
     command: redis-server --appendonly yes
 
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: shopdb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root_password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo_init:/docker-entrypoint-initdb.d:z
+
 volumes:
+  mongo_data:
   mysql_data:
   redis_data:
