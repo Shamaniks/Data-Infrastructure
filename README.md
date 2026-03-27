@@ -16,6 +16,7 @@ This is the first step in building a multi-database environment (**Polyglot Pers
 
 ## Project Structure
 The project is split into the database layer and the application layer:
+```
 .
 ├── backend/                  # Flask Application
 │   ├── connectors/           # Databases connectors dir   
@@ -34,6 +35,7 @@ The project is split into the database layer and the application layer:
 ├── redis/                    # Redis config & persistence volume
 ├── docker-compose.yml        # Full stack manifest (MySQL + Redis + API)
 └── README.md                 # You reading that right now
+```
 
 ## Quick Start
 
